@@ -3,7 +3,7 @@ import select
 import sys
 
 HOST = '127.0.0.1'
-PORT = 9999
+PORT = 65435
 name = input('enter your name: ')
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
