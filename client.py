@@ -1,25 +1,32 @@
 import socket
 import select
 import sys
+import threading
 
-HOST = '127.0.0.1'
-PORT = 65435
-name = input('enter your name: ')
+nickname = input("choose a nickname:")
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    try:
-        s.connect((HOST, PORT))
-        print('Connect successfully!!')
-        s.send(bytes(name, 'utf-8'))
-        while True:
-            sockets_list = [sys.stdin, s]
-            read_sockets, write_socket, error_socket = select.select(sockets_list, [], [])
-            for socks in read_sockets:
-                if socks == s:
-                    message = socks.recv(1024).decode()
-                    print(message)
-                else:
-                    message = input()
-                    s.send(bytes(name + ': ' + message, 'utf8'))
-    except Exception as e:
-        print(e)
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(('127.0.0.1', 55555))
+
+def receive():
+    while True:
+        try:
+            message = client.recv(1024).decode('ascii')
+            if message == 'NICK':
+                client.send(nickname.encode('ascii'))
+            else:
+                print(message)
+        except:
+            print("an erro ")
+            client.close()
+            break
+def write():
+    while True:
+        message = f'{nickname}: {input("")}'
+        client.send(message.encode('ascii'))
+        
+receive_thread = threading.Thread(target=receive)
+receive_thread.start()
+
+write_thread = threading.Thread(target=write)
+write_thread.start()
