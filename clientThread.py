@@ -1,6 +1,5 @@
 from threading import Thread
 
-
 class ClientThread(Thread):
     def __init__(self, conn, addr, client):
         super().__init__()
